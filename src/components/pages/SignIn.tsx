@@ -17,9 +17,11 @@ import { signIn } from "lib/api/auth"
 import { SignInData } from "interfaces/index"
 
 const useStyles = makeStyles((theme: Theme) => ({
+    container: {
+        marginTop: theme.spacing(6)
+    },
     submitBtn: {
-        paddingTop: theme.spacing(2),
-        textAlign: "right",
+        marginTop: theme.spacing(2),
         flexGrow: 1,
         textTransform: "none"
     },
@@ -28,17 +30,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     card: {
         padding: theme.spacing(2),
-        maxWidth: 400
+        maxWidth: 340
     },
     box: {
-        paddingTop: "2rem"
+        marginTop: "2rem"
     },
     link: {
         textDecoration: "none"
     }
 }))
 
-// サインイン用ページ
+// サインインページ
 const SignIn: React.FC = () => {
     const classes = useStyles()
     const history = useHistory()
@@ -62,7 +64,7 @@ const SignIn: React.FC = () => {
             console.log(res)
 
             if (res.status === 200) {
-                // 成功した場合はCookieに各値を格納
+                // ログインに成功した場合はCookieに各情報を格納
                 Cookies.set("_access_token", res.headers["access-token"] as string)
                 Cookies.set("_client", res.headers["client"] as string)
                 Cookies.set("_uid", res.headers["uid"] as string)
@@ -70,7 +72,10 @@ const SignIn: React.FC = () => {
                 setIsSignedIn(true)
                 setCurrentUser(res.data.data)
 
-                history.push("/")
+                history.push("/home")
+
+                setEmail("")
+                setPassword("")
 
                 console.log("Signed in successfully!")
             } else {
@@ -95,7 +100,7 @@ const SignIn: React.FC = () => {
                             label="メールアドレス"
                             value={email}
                             margin="dense"
-                            onChange={event => setEmail(event.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                         />
                         <TextField
                             variant="outlined"
@@ -103,30 +108,31 @@ const SignIn: React.FC = () => {
                             fullWidth
                             label="パスワード"
                             type="password"
-                            placeholder="6文字以上"
+                            placeholder="最低6文字以上"
                             value={password}
                             margin="dense"
                             autoComplete="current-password"
-                            onChange={event => setPassword(event.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                         />
-                        <Box className={classes.submitBtn} >
+                        <div style={{ textAlign: "right" }} >
                             <Button
                                 type="submit"
                                 variant="outlined"
                                 color="primary"
-                                disabled={!email || !password ? true : false}
+                                disabled={!email || !password ? true : false} // 空欄があった場合はボタンを押せないように
+                                className={classes.submitBtn}
                                 onClick={handleSubmit}
                             >
                                 送信
               </Button>
-                        </Box>
+                        </div>
                         <Box textAlign="center" className={classes.box}>
                             <Typography variant="body2">
                                 まだアカウントをお持ちでない方は
                 <Link to="/signup" className={classes.link}>
                                     こちら
                 </Link>
-                 から作成してください。
+                から作成してください。
               </Typography>
                         </Box>
                     </CardContent>
