@@ -1,85 +1,83 @@
 import React, { useContext } from "react"
-import { useHistory, Link } from "react-router-dom"
-import Cookies from "js-cookie"
+import { Link } from "react-router-dom"
 
 import { makeStyles, Theme } from "@material-ui/core/styles"
 
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
-import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
-import MenuIcon from "@material-ui/icons/Menu"
-
-import { signOut } from "lib/api/auth"
+import ExitToAppIcon from "@material-ui/icons/ExitToApp"
+import PersonIcon from "@material-ui/icons/Person"
+import SearchIcon from "@material-ui/icons/Search"
+import ChatBubbleIcon from "@material-ui/icons/ChatBubble"
 
 import { AuthContext } from "App"
 
 const useStyles = makeStyles((theme: Theme) => ({
-    iconButton: {
-        marginRight: theme.spacing(2),
-    },
     title: {
         flexGrow: 1,
         textDecoration: "none",
         color: "inherit"
     },
     linkBtn: {
-        textTransform: "none"
+        textTransform: "none",
+        marginLeft: theme.spacing(1)
     }
 }))
 
 const Header: React.FC = () => {
-    const { loading, isSignedIn, setIsSignedIn } = useContext(AuthContext)
+    const { loading, isSignedIn } = useContext(AuthContext)
     const classes = useStyles()
-    const histroy = useHistory()
 
-    const handleSignOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        try {
-            const res = await signOut()
-
-            if (res.data.success === true) {
-                // サインアウト時には各Cookieを削除
-                Cookies.remove("_access_token")
-                Cookies.remove("_client")
-                Cookies.remove("_uid")
-
-                setIsSignedIn(false)
-                histroy.push("/signin")
-
-                console.log("Succeeded in sign out")
-            } else {
-                console.log("Failed in sign out")
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
+    // 認証済みかどうかで表示ボタンを変更
     const AuthButtons = () => {
-        // 認証完了後はサインアウト用のボタンを表示
-        // 未認証時は認証用のボタンを表示
         if (!loading) {
             if (isSignedIn) {
                 return (
-                    <Button
-                        color="inherit"
-                        className={classes.linkBtn}
-                        onClick={handleSignOut}
-                    >
-                        サインアウト
-                    </Button>
+                    <>
+                        <IconButton
+                            component={Link}
+                            to="/users"
+                            edge="start"
+                            className={classes.linkBtn}
+                            color="inherit"
+                        >
+                            <SearchIcon />
+                        </IconButton>
+                        <IconButton
+                            component={Link}
+                            to="/chat_rooms"
+                            edge="start"
+                            className={classes.linkBtn}
+                            color="inherit"
+                        >
+                            <ChatBubbleIcon />
+                        </IconButton>
+                        <IconButton
+                            component={Link}
+                            to="/home"
+                            edge="start"
+                            className={classes.linkBtn}
+                            color="inherit"
+                        >
+                            <PersonIcon />
+                        </IconButton>
+                    </>
                 )
             } else {
                 return (
-                    <Button
-                        component={Link}
-                        to="/signin"
-                        color="inherit"
-                        className={classes.linkBtn}
-                    >
-                        サインイン
-                    </Button>
+                    <>
+                        <IconButton
+                            component={Link}
+                            to="/signin"
+                            edge="start"
+                            className={classes.linkBtn}
+                            color="inherit"
+                        >
+                            <ExitToAppIcon />
+                        </IconButton>
+                    </>
                 )
             }
         } else {
@@ -91,16 +89,9 @@ const Header: React.FC = () => {
         <>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton
-                        edge="start"
-                        className={classes.iconButton}
-                        color="inherit"
-                    >
-                        <MenuIcon />
-                    </IconButton>
                     <Typography
                         component={Link}
-                        to="/"
+                        to="/users"
                         variant="h6"
                         className={classes.title}
                     >
