@@ -14,6 +14,11 @@ export interface SignUpFormData extends FormData {
     append(name: keyof SignUpData, value: String | Blob, fileName?: string): any
 }
 
+export interface UserSerachFormData {
+    name: string,
+    prefecture: string
+}
+
 // サインイン
 export interface SignInData {
     email: string
@@ -49,6 +54,11 @@ export interface UpdateUserData {
 
 export interface UpdateUserFormData extends FormData {
     append(name: keyof UpdateUserData, value: String | Blob, fileName?: string): any
+}
+
+export interface SearchUserFormData extends FormData {
+    name?: string
+    prefecture?: number
 }
 
 // いいね

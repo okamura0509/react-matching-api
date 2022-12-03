@@ -1,5 +1,5 @@
 import client from "lib/api/client"
-import { UpdateUserFormData } from "interfaces/index"
+import { SearchUserFormData, UpdateUserFormData } from "interfaces/index"
 
 import Cookies from "js-cookie"
 
@@ -22,4 +22,10 @@ export const getUser = (id: number | undefined) => {
 // ユーザー情報を更新
 export const updateUser = (id: number | undefined | null, data: UpdateUserFormData) => {
     return client.put(`users/${id}`, data)
+}
+
+//ユーザー検索
+export const searchUser = (id: number | undefined | null, name: string, prefecture: string) => {
+    console.log(`users/${id}/search?prefecture=${prefecture}`)
+    return client.get(`users/${id}/search?prefecture=${prefecture}&name=${name}`)
 }
