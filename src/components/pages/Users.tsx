@@ -15,9 +15,9 @@ import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder"
 import AlertMessage from "components/utils/AlertMessage"
 
 import { prefectures } from "data/prefectures"
-import { getUsers } from "lib/api/users"
+import { getUsers, searchUser } from "lib/api/users"
 import { getLikes, createLike } from "lib/api/likes"
-import { User, Like } from "interfaces/index"
+import { User, Like, UserSerachFormData } from "interfaces/index"
 
 import { AuthContext } from "App"
 
@@ -58,6 +58,39 @@ const Users: React.FC = () => {
     const [alertMessageOpen, setAlertMessageOpen] = useState<boolean>(false)
     const [name, setName] = useState<string>("")
     const [prefecture, setPrefecture] = useState<number>()
+
+
+    // フォームデータを作成
+    const createFormData = (): FormData => {
+        const formData = new FormData()
+
+        formData.append("name", name)
+        formData.append("prefecture", String(prefecture))
+
+        return formData
+    }
+
+    //検索
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+
+        const data = createFormData()
+        console.log(data)
+
+        try {
+            const res = await searchUser(currentUser?.id, name, String(prefecture))
+            console.log(res)
+
+            if (res.status === 200) {
+                setUsers(res?.data.users)
+            } else {
+                setAlertMessageOpen(true)
+            }
+        } catch (err) {
+            console.log(err)
+            setAlertMessageOpen(true)
+        }
+    }
 
     // 生年月日から年齢を計算する 年齢 = floor((今日 - 誕生日) / 10000)
     const userAge = (): number | void => {
@@ -152,7 +185,51 @@ const Users: React.FC = () => {
 
     return (
         <>
+            <Card >
+                <CardHeader title="検索" />
+                <CardContent>
+                    <TextField
+                        variant="outlined"
+                        required
+                        fullWidth
+                        label="名前"
+                        value={name}
+                        margin="dense"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                    />
+                    <FormControl
+                        variant="outlined"
+                        margin="dense"
+                        fullWidth
+                    >
+                        <InputLabel id="demo-simple-select-outlined-label">都道府県</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            value={prefecture}
+                            onChange={(e: React.ChangeEvent<{ value: unknown }>) => { setPrefecture(e.target.value as number); console.log(prefecture) }}
+                            label="都道府県"
+                        >
+                            {
+                                prefectures.map((prefecture, index) =>
+                                    <MenuItem key={index + 1} value={index + 1}>{prefecture}</MenuItem>
+                                )
+                            }
+                        </Select>
+                    </FormControl>
+                    <div style={{ textAlign: "center" }} >
+                        <Button
+                            type="submit"
+                            variant="outlined"
+                            color="primary"
+                            onClick={(e) => { handleSubmit(e) }}
+                        >
+                            送信
 
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
             {
                 !loading ? (
                     users?.length > 0 ? (
