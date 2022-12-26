@@ -63,6 +63,15 @@ const Header: React.FC = () => {
                         >
                             <PersonIcon />
                         </IconButton>
+                        <IconButton
+                            component={Link}
+                            to="/myrequests"
+                            edge="start"
+                            className={classes.linkBtn}
+                            color="inherit"
+                        >
+                            <PersonIcon />
+                        </IconButton>
                     </>
                 )
             } else {

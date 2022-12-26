@@ -10,8 +10,18 @@ export interface SignUpData {
     image: string
 }
 
+export interface RequestData {
+    uid: string
+    title: string
+    body: string
+}
+
 export interface SignUpFormData extends FormData {
     append(name: keyof SignUpData, value: String | Blob, fileName?: string): any
+}
+
+export interface RequestFormData extends FormData {
+    append(name: keyof RequestData, value: String | Blob, fileName?: string): any
 }
 
 export interface UserSerachFormData {
@@ -83,6 +93,22 @@ export interface Message {
     userId: number | undefined
     content: string
     createdAt?: Date
+}
+
+// リクエスト
+export interface Request {
+    id: number
+    requesterId: number
+    workerId: number | undefined
+    title: string
+    body: string
+    createdAt?: Date
+}
+
+//マイリクエスト
+export interface MyRequest {
+    request: Request
+    requester: User
 }
 
 
